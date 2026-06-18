@@ -157,10 +157,17 @@ export default function CampaignDetail({ campaign, onClose }) {
           {/* Meta row */}
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
             {campaign.scheduled_time && (
-              <span className="flex items-center gap-1.5 text-[11px] text-text-muted">
-                <Calendar className="w-3 h-3" />
-                {campaign.timezone ? formatLocationTime(campaign.scheduled_time, campaign.timezone) : formatDate(campaign.scheduled_time)}
-              </span>
+              <div className="flex flex-col gap-1">
+                <span className="flex items-center gap-1.5 text-[11px] text-text-muted">
+                  <Calendar className="w-3 h-3" />
+                  <span title="Your local time">{formatDate(campaign.scheduled_time)}</span>
+                </span>
+                {campaign.timezone && campaign.timezone !== "Unknown" && (
+                  <span className="text-[10px] text-accent/80 font-medium pl-4.5">
+                    ↳ {formatLocationTime(campaign.scheduled_time, campaign.timezone)}
+                  </span>
+                )}
+              </div>
             )}
             {campaign.completed_date && (
               <span className="flex items-center gap-1.5 text-[11px] text-status-done">

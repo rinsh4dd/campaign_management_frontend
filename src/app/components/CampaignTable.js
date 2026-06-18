@@ -237,7 +237,14 @@ export default function CampaignTable({
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-1.5 text-[11px] text-text-muted">
                         <Calendar className="w-3 h-3 shrink-0" />
-                        {c.timezone ? formatLocationTime(c.scheduled_time, c.timezone) : formatDate(c.scheduled_time)}
+                        <div className="flex flex-col gap-0.5 w-full">
+                          <span title="Your local time">{formatDate(c.scheduled_time)}</span>
+                          {c.timezone && c.timezone !== "Unknown" && (
+                            <span className="text-[10px] text-accent/80 font-medium">
+                              ↳ {formatLocationTime(c.scheduled_time, c.timezone)}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       {c.completed_date && (
                         <div className="flex items-center gap-1.5 text-[11px] text-status-done">
