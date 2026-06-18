@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { X, ScrollText, RefreshCw, Layers } from "lucide-react";
+import { CampaignService } from "../services/api";
 
 function formatDate(dateStr) {
   if (!dateStr) return "—";
@@ -23,18 +24,8 @@ export default function GlobalLogsModal({ onClose }) {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/campaigns/get", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ mode: "ALL_LOGS" })
-      });
-      if (res.ok) {
-        setLogs(await res.json());
-      }
+      const result = await CampaignService.getAllLogs();
+      setLogs(result.data || []);
     } catch (err) {
       console.error(err);
     } finally {

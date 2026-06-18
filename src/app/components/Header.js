@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { LogOut, ScrollText, Menu, X, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import SettingsModal from "./SettingsModal";
+import { HealthService } from "../services/api";
 
 export default function Header() {
   const [health, setHealth] = useState(null);
@@ -15,13 +16,8 @@ export default function Header() {
   useEffect(() => {
     const check = async () => {
       try {
-        const res = await fetch("/api/health");
-        if (res.ok) {
-          const data = await res.json();
-          setHealth(data.status === "UP" ? "up" : "down");
-        } else {
-          setHealth("down");
-        }
+        const data = await HealthService.check();
+        setHealth(data.status === "UP" ? "up" : "down");
       } catch {
         setHealth("down");
       }

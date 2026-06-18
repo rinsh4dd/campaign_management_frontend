@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import LogsTable from "../components/LogsTable";
+import { CampaignService } from "../services/api";
 
 export default function LogsPage() {
   const [globalLogs, setGlobalLogs] = useState([]);
@@ -9,13 +10,8 @@ export default function LogsPage() {
 
   const fetchLogs = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      const res = await fetch("/api/campaigns/get", {
-        method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ mode: "ALL_LOGS" })
-      });
-      if (res.ok) setGlobalLogs((await res.json()).data || []);
+      const result = await CampaignService.getAllLogs();
+      setGlobalLogs(result.data || []);
     } catch (e) {
       console.error(e);
     } finally {

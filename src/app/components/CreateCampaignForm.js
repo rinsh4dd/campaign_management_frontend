@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, X, Type, Search, Clock, Users, Globe } from "lucide-react";
+import { CampaignService } from "../services/api";
 
 const REGIONS = [
   { name: "India (IST)", offset: 330 },
@@ -38,30 +39,18 @@ export default function CreateCampaignForm({ onCreated }) {
       utcDate.setUTCMinutes(utcDate.getUTCMinutes() - offsetMinutes);
       const finalUtcString = utcDate.toISOString();
 
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/campaigns/save", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          action: "ADD",
-          payload: {
-            ...form,
-            scheduledTime: finalUtcString,
-            leadLimit: form.leadLimit || 5,
-            actionCode: "WHATSAPP",
-          }
-        }),
-      });
+      const payload = {
+        ...form,
+        scheduledTime: finalUtcString,
+        leadLimit: form.leadLimit || 5,
+        actionCode: "WHATSAPP",
+      };
 
-      if (res.ok) {
-        const campaign = await res.json();
-        setForm({ campaignName: "", searchQuery: "", scheduledTime: "", timezoneOffset: "330", leadLimit: 5 });
-        setOpen(false);
-        onCreated?.(campaign);
-      }
+      const campaign = await CampaignService.createCampaign(payload);
+      
+      setForm({ campaignName: "", searchQuery: "", scheduledTime: "", timezoneOffset: "330", leadLimit: 5 });
+      setOpen(false);
+      onCreated?.(campaign);
     } catch (err) {
       console.error(err);
     } finally {

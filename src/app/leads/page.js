@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import LeadsTable from "../components/LeadsTable";
+import { CampaignService } from "../services/api";
 
 export default function LeadsPage() {
   const [globalLeads, setGlobalLeads] = useState([]);
@@ -9,14 +10,8 @@ export default function LeadsPage() {
 
   const fetchLeads = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      const res = await fetch("/api/campaigns/get", {
-        method: "POST", 
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ mode: "ALL_LEADS" })
-      });
-      if (res.ok) setGlobalLeads((await res.json()).data || []);
+      const result = await CampaignService.getAllLeads();
+      setGlobalLeads(result.data || []);
     } catch (e) {
       console.error(e);
     } finally {

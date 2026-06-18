@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, Eye, EyeOff } from "lucide-react";
+import { AuthService } from "../services/api";
 import Toast from "../components/Toast";
 
 export default function Login() {
@@ -18,24 +19,11 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        
-        // Use window.location.href instead of router.push to force a full re-render 
-        // of the dashboard to pick up the token on mount safely.
-        window.location.href = "/";
-      } else {
-        const errData = await res.json();
-        setToast({ message: errData.error || "Login failed", type: "error" });
-      }
+      const data = await AuthService.login(form.email, form.password);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      window.location.href = "/";
     } catch (err) {
       setToast({ message: "Network error occurred", type: "error" });
     } finally {

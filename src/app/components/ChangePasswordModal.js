@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Lock, KeyRound, Eye, EyeOff } from "lucide-react";
+import { AuthService } from "../services/api";
 
 export default function ChangePasswordModal({ onClose, onSuccess }) {
   const [oldPassword, setOldPassword] = useState("");
@@ -24,26 +25,10 @@ export default function ChangePasswordModal({ onClose, onSuccess }) {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/change-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({
-          old_password: oldPassword,
-          new_password: newPassword
-        })
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to change password.");
-      }
-
+      await AuthService.changePassword(oldPassword, newPassword);
       onSuccess("Password updated successfully!");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to change password.");
     } finally {
       setLoading(false);
     }

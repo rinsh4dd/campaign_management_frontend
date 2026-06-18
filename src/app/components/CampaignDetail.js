@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { X, Users, ScrollText, Phone, Mail, MapPin, RefreshCw } from "lucide-react";
+import { CampaignService } from "../services/api";
 
 const STATUS_MAP = {
   P: { label: "Pending", text: "text-status-pending" },
@@ -46,28 +47,12 @@ export default function CampaignDetail({ campaign, onClose }) {
     const load = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem("token");
-        const fetchConfig = (mode) => ({
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ mode, id: campaign.id })
-        });
-
         const [leadsRes, logsRes] = await Promise.all([
-          fetch(`/api/campaigns/get`, fetchConfig("LEADS")),
-          fetch(`/api/campaigns/get`, fetchConfig("LOGS")),
+          CampaignService.getCampaignLeads(campaign.id).catch(() => ({ data: [] })),
+          CampaignService.getCampaignLogs(campaign.id).catch(() => ({ data: [] })),
         ]);
-        if (leadsRes.ok) {
-          const result = await leadsRes.json();
-          setLeads(result.data || []);
-        }
-        if (logsRes.ok) {
-          const result = await logsRes.json();
-          setLogs(result.data || []);
-        }
+        setLeads(leadsRes.data || []);
+        setLogs(logsRes.data || []);
       } catch (err) {
         console.error(err);
       } finally {

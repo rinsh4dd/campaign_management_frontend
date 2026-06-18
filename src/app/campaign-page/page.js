@@ -6,6 +6,7 @@ import CreateCampaignModal from "../components/CreateCampaignModal";
 import CampaignDetail from "../components/CampaignDetail";
 import Toast from "../components/Toast";
 import { Plus } from "lucide-react";
+import { CampaignService } from "../services/api";
 
 export default function CampaignPage() {
   const [campaigns, setCampaigns] = useState([]);
@@ -16,20 +17,8 @@ export default function CampaignPage() {
 
   const fetchCampaigns = async (animate = false) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      const res = await fetch("/api/campaigns/get", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ mode: "ALL" })
-      });
-      if (res.ok) {
-        const result = await res.json();
-        setCampaigns(result.data || []);
-      }
+      const result = await CampaignService.getCampaigns();
+      setCampaigns(result.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -46,64 +35,33 @@ export default function CampaignPage() {
   const handleDeleteCampaign = async (id) => {
     if (!confirm(`Are you sure you want to delete campaign ID ${id}?`)) return;
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/campaigns/save", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ action: "DELETE", id })
-      });
-      if (res.ok) {
-        setCampaigns((prev) => prev.filter((c) => c.id !== id));
-        if (selectedCampaign?.id === id) setSelectedCampaign(null);
-        showToast(`Campaign ${id} deleted`, "success");
-      } else {
-        showToast("Failed to delete campaign", "error");
-      }
+      await CampaignService.deleteCampaign(id);
+      setCampaigns((prev) => prev.filter((c) => c.id !== id));
+      if (selectedCampaign?.id === id) setSelectedCampaign(null);
+      showToast(`Campaign ${id} deleted`, "success");
     } catch (err) {
-      showToast("Error deleting campaign", "error");
+      showToast("Failed to delete campaign", "error");
     }
   };
 
   const handleStopCampaign = async (id) => {
     if (!confirm(`Are you sure you want to stop campaign ID ${id}?`)) return;
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/campaigns/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ action: "STOP", id })
-      });
-      if (res.ok) {
-        showToast(`Campaign ${id} stopped`, "info");
-        fetchCampaigns(false);
-      } else {
-        showToast("Failed to stop campaign", "error");
-      }
+      await CampaignService.stopCampaign(id);
+      showToast(`Campaign ${id} stopped`, "info");
+      fetchCampaigns(false);
     } catch (err) {
-      showToast("Error stopping campaign", "error");
+      showToast("Failed to stop campaign", "error");
     }
   };
 
   const handleTriggerCampaign = async (id) => {
-    // Though currently backend trigger runs all pending, we can pass id if we adapt it later
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/campaigns/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ action: "TRIGGER", id })
-      });
-      if (res.ok) {
-        showToast("Campaign triggered", "info");
-        fetchCampaigns(false);
-      } else {
-        showToast("Failed to trigger campaign", "error");
-      }
+      await CampaignService.triggerCampaign(id);
+      showToast("Campaign triggered", "info");
+      fetchCampaigns(false);
     } catch (err) {
-      showToast("Error triggering campaign", "error");
+      showToast("Failed to trigger campaign", "error");
     }
   };
 

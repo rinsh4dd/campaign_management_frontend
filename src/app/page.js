@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import DashboardAnalytics from "./components/DashboardAnalytics";
+import { CampaignService } from "./services/api";
 
 export default function Dashboard() {
   const [campaigns, setCampaigns] = useState([]);
@@ -10,20 +11,8 @@ export default function Dashboard() {
 
   const fetchCampaigns = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      const res = await fetch("/api/campaigns/get", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ mode: "ALL" })
-      });
-      if (res.ok) {
-        const result = await res.json();
-        setCampaigns(result.data || []);
-      }
+      const result = await CampaignService.getCampaigns();
+      setCampaigns(result.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -33,14 +22,8 @@ export default function Dashboard() {
 
   const fetchLeads = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      const res = await fetch("/api/campaigns/get", {
-        method: "POST", 
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ mode: "ALL_LEADS" })
-      });
-      if (res.ok) setGlobalLeads((await res.json()).data || []);
+      const result = await CampaignService.getAllLeads();
+      setGlobalLeads(result.data || []);
     } catch (e) {
       console.error(e);
     }

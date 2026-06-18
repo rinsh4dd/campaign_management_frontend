@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { X, ScrollText, RefreshCw, Layers, Users, Menu, Lock } from "lucide-react";
+import { CampaignService, AuthService } from "../services/api";
 
 function formatDate(dateStr) {
   if (!dateStr) return "—";
@@ -27,19 +28,12 @@ export default function SettingsModal({ initialTab = "logs", onClose }) {
   const fetchData = async (mode) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/campaigns/get", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ mode })
-      });
-      if (res.ok) {
-        const result = await res.json();
-        if (mode === "ALL_LOGS") setLogs(result.data || []);
-        if (mode === "ALL_LEADS") setLeads(result.data || []);
+      if (mode === "ALL_LOGS") {
+        const result = await CampaignService.getAllLogs();
+        setLogs(result.data || []);
+      } else if (mode === "ALL_LEADS") {
+        const result = await CampaignService.getAllLeads();
+        setLeads(result.data || []);
       }
     } catch (err) {
       console.error(err);
@@ -213,28 +207,11 @@ export default function SettingsModal({ initialTab = "logs", onClose }) {
                   }
 
                   try {
-                    const token = localStorage.getItem("token");
-                    const res = await fetch("/api/auth/change-password", {
-                      method: "POST",
-                      headers: { 
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                      },
-                      body: JSON.stringify({ 
-                        old_password: passwordForm.old_password, 
-                        new_password: passwordForm.new_password 
-                      })
-                    });
-                    
-                    const data = await res.json();
-                    if (res.ok) {
-                      setPasswordStatus({ loading: false, error: "", success: "Password changed successfully" });
-                      setPasswordForm({ old_password: "", new_password: "", confirm_password: "" });
-                    } else {
-                      setPasswordStatus({ loading: false, error: data.error || "Failed to change password", success: "" });
-                    }
+                    await AuthService.changePassword(passwordForm.old_password, passwordForm.new_password);
+                    setPasswordStatus({ loading: false, error: "", success: "Password changed successfully" });
+                    setPasswordForm({ old_password: "", new_password: "", confirm_password: "" });
                   } catch (err) {
-                    setPasswordStatus({ loading: false, error: "An error occurred", success: "" });
+                    setPasswordStatus({ loading: false, error: err.message || "An error occurred", success: "" });
                   }
                 }}
               >
