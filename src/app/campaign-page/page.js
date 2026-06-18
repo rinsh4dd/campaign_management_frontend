@@ -67,6 +67,46 @@ export default function CampaignPage() {
     }
   };
 
+  const handleStopCampaign = async (id) => {
+    if (!confirm(`Are you sure you want to stop campaign ID ${id}?`)) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/campaigns/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ action: "STOP", id })
+      });
+      if (res.ok) {
+        showToast(`Campaign ${id} stopped`, "info");
+        fetchCampaigns(false);
+      } else {
+        showToast("Failed to stop campaign", "error");
+      }
+    } catch (err) {
+      showToast("Error stopping campaign", "error");
+    }
+  };
+
+  const handleTriggerCampaign = async (id) => {
+    // Though currently backend trigger runs all pending, we can pass id if we adapt it later
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/campaigns/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ action: "TRIGGER", id })
+      });
+      if (res.ok) {
+        showToast("Campaign triggered", "info");
+        fetchCampaigns(false);
+      } else {
+        showToast("Failed to trigger campaign", "error");
+      }
+    } catch (err) {
+      showToast("Error triggering campaign", "error");
+    }
+  };
+
   const showToast = (message, type) => setToast({ message, type });
 
   if (loading) {
@@ -91,7 +131,8 @@ export default function CampaignPage() {
           campaigns={campaigns} 
           onSelect={setSelectedCampaign}
           onDelete={handleDeleteCampaign}
-          onTrigger={() => {}}
+          onTrigger={handleTriggerCampaign}
+          onStop={handleStopCampaign}
         />
       </div>
 

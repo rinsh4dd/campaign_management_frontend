@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { 
   Filter, ArrowUpDown, Search, Download, Plus, 
-  MoreHorizontal, Play, Trash2, Calendar, CheckCircle2 
+  MoreHorizontal, Play, Square, Trash2, Calendar, CheckCircle2 
 } from "lucide-react";
 
 const STATUS_MAP = {
@@ -21,7 +21,7 @@ function formatDate(dateStr) {
   });
 }
 
-export default function CampaignTable({ campaigns, onAdd, onSelect, onDelete, onTrigger, initialSearch }) {
+export default function CampaignTable({ campaigns, onAdd, onSelect, onDelete, onTrigger, onStop, initialSearch }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [search, setSearch] = useState(initialSearch || "");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -200,7 +200,7 @@ export default function CampaignTable({ campaigns, onAdd, onSelect, onDelete, on
                       <span className="text-xs text-text-muted font-mono mt-0.5">{c.search_query}</span>
                     </div>
                   </td>
-                  <td className="p-4">{c.lead_limit || 5} pcs</td>
+                  <td className="p-4">{c.lead_limit || 5} leads</td>
                   <td className="p-4 text-xs">
                     <div className="flex items-center gap-1.5 text-text-muted">
                       <Calendar className="w-3 h-3" /> {formatDate(c.scheduled_time)}
@@ -218,13 +218,23 @@ export default function CampaignTable({ campaigns, onAdd, onSelect, onDelete, on
                   </td>
                   <td className="p-4 text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center gap-2">
-                      <button 
-                        className="p-1.5 text-text-muted hover:text-accent transition-colors rounded-md hover:bg-surface-hover"
-                        title="Force Run"
-                        onClick={() => onTrigger(c.id)}
-                      >
-                        <Play className="w-4 h-4" />
-                      </button>
+                      {c.status === "R" || c.status === "P" ? (
+                        <button 
+                          className="p-1.5 text-text-muted hover:text-status-error transition-colors rounded-md hover:bg-status-error/10"
+                          title="Stop Campaign"
+                          onClick={() => onStop(c.id)}
+                        >
+                          <Square className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <button 
+                          className="p-1.5 text-text-muted hover:text-accent transition-colors rounded-md hover:bg-surface-hover"
+                          title="Force Run"
+                          onClick={() => onTrigger(c.id)}
+                        >
+                          <Play className="w-4 h-4" />
+                        </button>
+                      )}
                       <button 
                         className="p-1.5 text-text-muted hover:text-status-error transition-colors rounded-md hover:bg-status-error/10"
                         title="Delete"
