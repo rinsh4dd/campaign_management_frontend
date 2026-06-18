@@ -42,7 +42,7 @@ export const CampaignService = {
 };
 
 export const AuthService = {
-  login: (username, password) => request("/api/auth/login", { method: "POST", body: JSON.stringify({ username, password }) }),
+  login: (email, password) => request("/api/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
   changePassword: (oldPassword, newPassword) => request("/api/auth/change-password", { method: "POST", body: JSON.stringify({ oldPassword, newPassword }) }),
 };
 
