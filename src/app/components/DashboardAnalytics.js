@@ -1,7 +1,10 @@
 "use client";
 
 import { TrendingUp, Activity, PlayCircle, Clock, CheckCircle2, AlertCircle } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { 
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid
+} from "recharts";
 
 export default function DashboardAnalytics({ stats, leads = [] }) {
   // Compute real data for the last 7 days
@@ -28,11 +31,9 @@ export default function DashboardAnalytics({ stats, leads = [] }) {
     };
   });
 
-  const maxLeads = Math.max(...dailyCounts.map(d => d.leads), 1); // Avoid div by 0
-
   const weeklyData = dailyCounts.map(d => ({
-    ...d,
-    heightPercent: Math.max(5, Math.round((d.leads / maxLeads) * 100)) // Give at least 5% so the bar is visible
+    name: d.day,
+    leads: d.leads
   }));
 
   // Prepare Doughnut Chart Data (Filtering out 0 values)
@@ -92,7 +93,7 @@ export default function DashboardAnalytics({ stats, leads = [] }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Leads Over Time Graph */}
-        <div className="bg-surface-elevated rounded-2xl border border-border-subtle shadow-sm p-6">
+        <div className="bg-surface-elevated rounded-2xl border border-border-subtle shadow-sm p-6 flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-sm font-semibold text-text-primary flex items-center gap-2">
@@ -106,22 +107,44 @@ export default function DashboardAnalytics({ stats, leads = [] }) {
             </select>
           </div>
           
-          <div className="h-48 flex items-end justify-between gap-2 mt-4 px-2">
-            {weeklyData.map((d, i) => (
-              <div key={i} className="flex flex-col items-center gap-2 flex-1 group">
-                <div className="w-full bg-surface border border-border-subtle rounded-t-sm relative h-full flex items-end">
-                  <div 
-                    className="w-full bg-accent/80 rounded-t-sm transition-all duration-500 group-hover:bg-accent"
-                    style={{ height: `${d.heightPercent}%` }}
-                  />
-                  {/* Tooltip */}
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                    {d.leads} leads
-                  </div>
-                </div>
-                <span className="text-[10px] text-text-muted font-medium">{d.day}</span>
-              </div>
-            ))}
+          <div className="flex-1 w-full min-h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={weeklyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" opacity={0.5} />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 11, fill: '#6b7280' }} 
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 11, fill: '#6b7280' }}
+                  allowDecimals={false}
+                />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '12px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  itemStyle={{ color: '#3b82f6', fontWeight: 600 }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="leads" 
+                  stroke="#3b82f6" 
+                  strokeWidth={2}
+                  fillOpacity={1} 
+                  fill="url(#colorLeads)" 
+                  activeDot={{ r: 6, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
