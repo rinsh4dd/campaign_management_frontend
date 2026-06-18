@@ -23,7 +23,7 @@ export default function CreateCampaignForm({ onCreated }) {
     campaignName: "",
     searchQuery: "",
     scheduledTime: "",
-    timezoneOffset: "330", // Default India
+    timezoneName: "India (IST)",
     leadLimit: 5,
   });
 
@@ -33,13 +33,12 @@ export default function CreateCampaignForm({ onCreated }) {
 
     setLoading(true);
     try {
-      // Calculate correct UTC time from the selected local time and region offset
-      const offsetMinutes = parseInt(form.timezoneOffset, 10);
-      const utcDate = new Date(form.scheduledTime + "Z"); // Parse as UTC
+      const selectedRegion = REGIONS.find(r => r.name === form.timezoneName);
+      const offsetMinutes = selectedRegion ? selectedRegion.offset : 330;
+      
+      const utcDate = new Date(form.scheduledTime + "Z");
       utcDate.setUTCMinutes(utcDate.getUTCMinutes() - offsetMinutes);
       const finalUtcString = utcDate.toISOString();
-
-      const selectedRegion = REGIONS.find(r => r.offset.toString() === form.timezoneOffset);
 
       const payload = {
         ...form,
@@ -51,7 +50,7 @@ export default function CreateCampaignForm({ onCreated }) {
 
       const campaign = await CampaignService.createCampaign(payload);
       
-      setForm({ campaignName: "", searchQuery: "", scheduledTime: "", timezoneOffset: "330", leadLimit: 5 });
+      setForm({ campaignName: "", searchQuery: "", scheduledTime: "", timezoneName: "India (IST)", leadLimit: 5 });
       setOpen(false);
       onCreated?.(campaign);
     } catch (err) {
@@ -125,12 +124,12 @@ export default function CreateCampaignForm({ onCreated }) {
         <div className="relative">
           <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
           <select
-            value={form.timezoneOffset}
-            onChange={(e) => setForm({ ...form, timezoneOffset: e.target.value })}
+            value={form.timezoneName}
+            onChange={(e) => setForm({ ...form, timezoneName: e.target.value })}
             className="w-full pl-9 pr-3.5 py-2.5 rounded-lg border border-border-subtle bg-surface text-sm text-text-primary transition-colors focus:border-accent appearance-none cursor-pointer"
           >
             {REGIONS.map((region) => (
-              <option key={region.name} value={region.offset}>
+              <option key={region.name} value={region.name}>
                 {region.name}
               </option>
             ))}
