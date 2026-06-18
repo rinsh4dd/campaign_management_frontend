@@ -50,7 +50,7 @@ export default function Header() {
         <div className="mx-auto max-w-5xl flex items-center justify-between px-4 md:px-6 py-4">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
-            <img src="https://flowbee.io/images/logo.png" alt="Flowbee Logo" className="h-5 md:h-6 object-contain" />
+            <img src="/logo.png" alt="Scheduler Logo" className="h-5 md:h-6 object-contain rounded" />
             <div className="h-5 w-px bg-border-subtle mx-1 md:mx-2" />
             <span className="text-sm md:text-base font-medium tracking-wide text-text-primary">
               Campaign Scheduler

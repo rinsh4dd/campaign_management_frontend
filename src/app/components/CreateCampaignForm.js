@@ -39,11 +39,14 @@ export default function CreateCampaignForm({ onCreated }) {
       utcDate.setUTCMinutes(utcDate.getUTCMinutes() - offsetMinutes);
       const finalUtcString = utcDate.toISOString();
 
+      const selectedRegion = REGIONS.find(r => r.offset.toString() === form.timezoneOffset);
+
       const payload = {
         ...form,
         scheduledTime: finalUtcString,
         leadLimit: form.leadLimit || 5,
         actionCode: "WHATSAPP",
+        timezone: selectedRegion ? selectedRegion.name : "Unknown",
       };
 
       const campaign = await CampaignService.createCampaign(payload);

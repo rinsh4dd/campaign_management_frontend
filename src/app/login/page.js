@@ -35,10 +35,12 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-10">
-          <img src="https://flowbee.io/images/logo.png" alt="Flowbee Logo" className="h-10 object-contain mb-6" />
+          <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg mb-6">
+            <img src="/logo.png" alt="Scheduler Logo" className="w-full h-full object-cover" />
+          </div>
           <h1 className="text-2xl font-light text-text-primary tracking-wide">Welcome Back</h1>
           <p className="text-sm text-text-muted mt-2 text-center max-w-sm">
-            Sign in to the Flowbee Campaign Scheduler dashboard to manage your automated workflows.
+            Sign in to the Campaign Scheduler dashboard to manage your automated workflows.
           </p>
         </div>
 

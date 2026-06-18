@@ -8,17 +8,18 @@ export default function ClientLayout({ children, onPasswordModalOpen }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex h-[100dvh] bg-background overflow-hidden relative">
-      {/* Overlay for mobile sidebar */}
+    <div className="flex h-full bg-background overflow-hidden">
+
+      {/* ── Mobile Overlay ──────────────────────────────── */}
       {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar - sliding on mobile, static on desktop */}
-      <div 
+      {/* ── Sidebar (slide on mobile, static on desktop) ── */}
+      <div
         className={`fixed md:static inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
@@ -26,14 +27,19 @@ export default function ClientLayout({ children, onPasswordModalOpen }) {
         <Sidebar onCloseMobile={() => setIsMobileMenuOpen(false)} />
       </div>
 
-      <div className="flex-1 flex flex-col min-w-0 min-h-0 relative">
-        <TopHeader 
+      {/* ── Main Column ──────────────────────────────────── */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
+        <TopHeader
           title="Campaign Scheduler"
           onMenuToggle={() => setIsMobileMenuOpen(true)}
           onChangePasswordClick={onPasswordModalOpen}
         />
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8 relative">
-          {children}
+
+        {/* Scrollable page area */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden scroll-section">
+          <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>

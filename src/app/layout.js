@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { LenisProvider } from "./components/LenisProvider";
 import AuthenticatedLayout from "./components/AuthenticatedLayout";
 
 const geistSans = Geist({
@@ -14,10 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Flowbee Campaign Scheduler",
-  description: "Manage your Flowbee marketing campaigns",
+  title: "Campaign Scheduler",
+  description: "Manage your marketing campaigns with the Sharaco Campaign Scheduler",
   icons: {
-    icon: "https://flowbee.io/images/logo.png",
+    icon: "/favicon.png",
   },
 };
 
@@ -27,12 +26,10 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <LenisProvider>
-          <AuthenticatedLayout>
-            {children}
-          </AuthenticatedLayout>
-        </LenisProvider>
+      <body className="h-full overflow-hidden">
+        <AuthenticatedLayout>
+          {children}
+        </AuthenticatedLayout>
       </body>
     </html>
   );

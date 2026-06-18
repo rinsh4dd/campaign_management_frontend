@@ -5,25 +5,26 @@
   --color-surface-elevated: #fafafa;
   --color-surface-hover: #f4f4f5;
   --color-border-subtle: #e4e4e7;
-  --color-border-active: rgba(255, 200, 48, 0.5); /* #FFC830 */
+  --color-border-active: rgba(255, 200, 48, 0.5);
   --color-text-primary: #18181b;
   --color-text-secondary: #3f3f46;
   --color-text-muted: #71717a;
-  
+
   /* Primary Accent Colors */
   --color-accent: #FFC830;
   --color-accent-hover: #e5b42b;
-  --color-accent-soft: rgba(255, 200, 48, 0.15);
-  
-  /* Status Colors (Adjusted slightly for light mode readability) */
+  --color-accent-soft: rgba(255, 200, 48, 0.12);
+  --color-accent-glow: rgba(255, 200, 48, 0.25);
+
+  /* Status Colors */
   --color-status-pending: #f59e0b;
   --color-status-running: #3b82f6;
   --color-status-done: #10b981;
   --color-status-error: #ef4444;
-  
-  --color-background: #f4f4f5;
+
+  --color-background: #f1f1f3;
   --color-foreground: #18181b;
-  
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -36,63 +37,196 @@
   --color-text-primary: #f4f4f5;
   --color-text-secondary: #d4d4d8;
   --color-text-muted: #a1a1aa;
-  
   --color-background: #09090b;
   --color-foreground: #f4f4f5;
 }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+/* ─── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Thin scrollbar for webkit */
+/* ─── Scrollbars ────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(113, 113, 122, 0.25) transparent;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(113, 113, 122, 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(113, 113, 122, 0.45);
+}
+
+/* ─── Animations ───────────────────────────────────────────── */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+@keyframes spin-smooth {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-pulse-soft    { animation: pulse-soft 2.5s ease-in-out infinite; }
+.animate-fade-in       { animation: fade-in 0.4s ease-out both; }
+.animate-fade-in-up    { animation: fade-in-up 0.45s ease-out both; }
+.animate-slide-in-right{ animation: slide-in-right 0.35s ease-out both; }
+.animate-scale-in      { animation: scale-in 0.25s ease-out both; }
+.animate-spin-smooth   { animation: spin-smooth 0.75s linear infinite; }
+
+/* Stagger delay helpers */
+.delay-75  { animation-delay: 75ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-225 { animation-delay: 225ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* ─── Skeleton Shimmer ─────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-hover) 25%,
+    var(--color-surface-elevated) 50%,
+    var(--color-surface-hover) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+/* ─── Modal Backdrop ──────────────────────────────────────── */
+.modal-backdrop {
+  backdrop-filter: blur(6px) saturate(1.2);
+  background: rgba(255, 255, 255, 0.55);
+}
+.dark .modal-backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+/* ─── Glass Card ──────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.dark .glass {
+  background: rgba(39, 39, 42, 0.75);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+}
+
+/* ─── Input Focus Ring ─────────────────────────────────────── */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px var(--color-accent-glow);
+}
+
+/* ─── Accent Button Text ─────────────────────────────────── */
+.btn-accent {
+  background: var(--color-accent);
+  color: #18181b;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+.btn-accent:hover {
+  background: var(--color-accent-hover);
+  box-shadow: 0 4px 16px var(--color-accent-glow);
+  transform: translateY(-1px);
+}
+.btn-accent:active {
+  transform: translateY(0);
+}
+
+/* ─── Gradient Accent Bar ─────────────────────────────────── */
+.accent-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #FFC830 0%, #FFE082 50%, #FFC830 100%);
   border-radius: 999px;
 }
 
-/* Status dot pulse */
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+/* ─── Status Pills ─────────────────────────────────────────── */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border: 1px solid currentColor;
 }
 
-.animate-pulse-soft {
-  animation: pulse-soft 2.5s ease-in-out infinite;
+/* ─── Responsive Table Helpers ─────────────────────────────── */
+.table-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Modal backdrop */
-.modal-backdrop {
-  backdrop-filter: blur(4px);
-  background: rgba(255, 255, 255, 0.6);
+/* ─── Scrollable Section (fixed height + internal scroll) ── */
+.scroll-section {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.dark .modal-backdrop {
-  background: rgba(0, 0, 0, 0.6);
+/* ─── Sidebar Active Glow ─────────────────────────────────── */
+.nav-active {
+  background: linear-gradient(135deg, rgba(255,200,48,0.15) 0%, rgba(255,200,48,0.08) 100%);
+  color: #b8860b;
+  font-weight: 600;
 }
 
-/* Input focus ring */
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--color-accent) !important;
-  box-shadow: 0 0 0 1px rgba(255, 200, 48, 0.3);
+/* ─── Card Hover Lift ─────────────────────────────────────── */
+.card-lift {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-
-/* Custom override for buttons with white text if needed, 
-   but since FFC830 is yellow, black text might be better. 
-   We will ensure the create button uses black text on yellow bg. */
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
