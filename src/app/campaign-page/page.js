@@ -65,6 +65,17 @@ export default function CampaignPage() {
     }
   };
 
+  const handleRetryCampaign = async (id) => {
+    if (!confirm(`Are you sure you want to retry the failed campaign ID ${id}?`)) return;
+    try {
+      await CampaignService.retryCampaign(id);
+      showToast(`Campaign ${id} marked for retry`, "success");
+      fetchCampaigns(false);
+    } catch (err) {
+      showToast("Failed to retry campaign", "error");
+    }
+  };
+
   const showToast = (message, type) => setToast({ message, type });
 
   if (loading) {
@@ -91,6 +102,7 @@ export default function CampaignPage() {
           onDelete={handleDeleteCampaign}
           onTrigger={handleTriggerCampaign}
           onStop={handleStopCampaign}
+          onRetry={handleRetryCampaign}
         />
       </div>
 

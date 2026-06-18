@@ -38,6 +38,7 @@ export const CampaignService = {
   deleteCampaign: (id) => request("/api/campaigns/save", { method: "POST", body: JSON.stringify({ action: "DELETE", id }) }),
   triggerCampaign: (id) => request("/api/campaigns/save", { method: "POST", body: JSON.stringify({ action: "TRIGGER", id }) }),
   stopCampaign: (id) => request("/api/campaigns/save", { method: "POST", body: JSON.stringify({ action: "STOP", id }) }),
+  retryCampaign: (id) => request("/api/campaigns/save", { method: "POST", body: JSON.stringify({ action: "RETRY", id }) }),
 };
 
 export const AuthService = {

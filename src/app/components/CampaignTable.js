@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { 
   Filter, ArrowUpDown, Search, Download, Plus, 
-  MoreHorizontal, Play, Square, Trash2, Calendar, CheckCircle2 
+  MoreHorizontal, Play, Square, Trash2, Calendar, CheckCircle2, RotateCw
 } from "lucide-react";
 
 const STATUS_MAP = {
@@ -21,7 +21,7 @@ function formatDate(dateStr) {
   });
 }
 
-export default function CampaignTable({ campaigns, onAdd, onSelect, onDelete, onTrigger, onStop, initialSearch }) {
+export default function CampaignTable({ campaigns, onAdd, onSelect, onDelete, onTrigger, onStop, onRetry, initialSearch }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [search, setSearch] = useState(initialSearch || "");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -225,6 +225,14 @@ export default function CampaignTable({ campaigns, onAdd, onSelect, onDelete, on
                           onClick={() => onStop(c.id)}
                         >
                           <Square className="w-4 h-4" />
+                        </button>
+                      ) : c.status === "E" ? (
+                        <button 
+                          className="p-1.5 text-text-muted hover:text-accent transition-colors rounded-md hover:bg-surface-hover"
+                          title="Retry Failed Campaign"
+                          onClick={() => onRetry(c.id)}
+                        >
+                          <RotateCw className="w-4 h-4" />
                         </button>
                       ) : (
                         <button 
