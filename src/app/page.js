@@ -58,10 +58,11 @@ export default function Dashboard() {
 
   const stats = useMemo(() => {
     const total = campaigns.length;
-    const pending = campaigns.filter(c => c.status === "P" || c.status === "R").length;
+    const pending = campaigns.filter(c => c.status === "P").length;
+    const running = campaigns.filter(c => c.status === "R").length;
     const done = campaigns.filter(c => c.status === "D").length;
     const error = campaigns.filter(c => c.status === "E").length;
-    return { total, pending, done, error };
+    return { total, pending, running, done, error };
   }, [campaigns]);
 
   if (loading) {

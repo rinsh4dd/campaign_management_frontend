@@ -152,12 +152,6 @@ export default function CampaignTable({ campaigns, onAdd, onSelect, onDelete, on
           >
             <Download className="w-4 h-4 text-text-muted" /> Export
           </button>
-          <button 
-            onClick={onAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-black/80 transition-colors shadow-sm"
-          >
-            <Plus className="w-4 h-4" /> Add New Campaign
-          </button>
         </div>
       </div>
 
