@@ -102,7 +102,7 @@ export default function CampaignDetail({ campaign, onClose }) {
 
       <div
         ref={panelRef}
-        className="relative w-full max-w-lg h-full bg-surface border-l border-border-subtle overflow-y-auto flex flex-col shadow-2xl"
+        className="relative w-full max-w-lg h-full bg-surface border-l border-border-subtle overflow-y-auto flex flex-col shadow-2xl max-h-[90vh]"
       >
         {/* Header */}
         <div className="shrink-0 bg-surface/90 backdrop-blur-sm border-b border-border-subtle px-6 py-5">

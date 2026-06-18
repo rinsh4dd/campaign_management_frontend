@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LenisProvider } from "./components/LenisProvider";
+import AuthenticatedLayout from "./components/AuthenticatedLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,11 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <LenisProvider>{children}</LenisProvider>
+        <LenisProvider>
+          <AuthenticatedLayout>
+            {children}
+          </AuthenticatedLayout>
+        </LenisProvider>
       </body>
     </html>
   );

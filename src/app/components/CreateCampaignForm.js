@@ -1,7 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X, Type, Search, Clock, Users } from "lucide-react";
+import { Plus, X, Type, Search, Clock, Users, Globe } from "lucide-react";
+
+const REGIONS = [
+  { name: "India (IST)", offset: 330 },
+  { name: "UAE (GST)", offset: 240 },
+  { name: "Oman (GST)", offset: 240 },
+  { name: "Saudi Arabia (AST)", offset: 180 },
+  { name: "Qatar (AST)", offset: 180 },
+  { name: "Kuwait (AST)", offset: 180 },
+  { name: "Bahrain (AST)", offset: 180 },
+  { name: "UK (GMT/BST)", offset: 0 },
+  { name: "USA (EST)", offset: -300 },
+];
 
 export default function CreateCampaignForm({ onCreated }) {
   const [open, setOpen] = useState(false);
@@ -10,6 +22,7 @@ export default function CreateCampaignForm({ onCreated }) {
     campaignName: "",
     searchQuery: "",
     scheduledTime: "",
+    timezoneOffset: "330", // Default India
     leadLimit: 5,
   });
 
@@ -19,6 +32,12 @@ export default function CreateCampaignForm({ onCreated }) {
 
     setLoading(true);
     try {
+      // Calculate correct UTC time from the selected local time and region offset
+      const offsetMinutes = parseInt(form.timezoneOffset, 10);
+      const utcDate = new Date(form.scheduledTime + "Z"); // Parse as UTC
+      utcDate.setUTCMinutes(utcDate.getUTCMinutes() - offsetMinutes);
+      const finalUtcString = utcDate.toISOString();
+
       const token = localStorage.getItem("token");
       const res = await fetch("/api/campaigns/save", {
         method: "POST",
@@ -30,7 +49,7 @@ export default function CreateCampaignForm({ onCreated }) {
           action: "ADD",
           payload: {
             ...form,
-            scheduledTime: new Date(form.scheduledTime).toISOString(),
+            scheduledTime: finalUtcString,
             leadLimit: form.leadLimit || 5,
             actionCode: "WHATSAPP",
           }
@@ -39,7 +58,7 @@ export default function CreateCampaignForm({ onCreated }) {
 
       if (res.ok) {
         const campaign = await res.json();
-        setForm({ campaignName: "", searchQuery: "", scheduledTime: "", leadLimit: 5 });
+        setForm({ campaignName: "", searchQuery: "", scheduledTime: "", timezoneOffset: "330", leadLimit: 5 });
         setOpen(false);
         onCreated?.(campaign);
       }
@@ -110,6 +129,20 @@ export default function CreateCampaignForm({ onCreated }) {
             onChange={(e) => setForm({ ...form, scheduledTime: e.target.value })}
             className="w-full pl-9 pr-3.5 py-2.5 rounded-lg border border-border-subtle bg-surface text-sm text-text-primary transition-colors focus:border-accent"
           />
+        </div>
+        <div className="relative">
+          <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+          <select
+            value={form.timezoneOffset}
+            onChange={(e) => setForm({ ...form, timezoneOffset: e.target.value })}
+            className="w-full pl-9 pr-3.5 py-2.5 rounded-lg border border-border-subtle bg-surface text-sm text-text-primary transition-colors focus:border-accent appearance-none cursor-pointer"
+          >
+            {REGIONS.map((region) => (
+              <option key={region.name} value={region.offset}>
+                {region.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="relative">
           <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />

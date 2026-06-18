@@ -1,105 +1,28 @@
 "use client";
 
-import { Bell, Search, Settings, ChevronDown, User, LogOut, KeyRound } from "lucide-react";
+import { Bell, Settings, ChevronDown, User, LogOut, KeyRound, Menu } from "lucide-react";
 import { useState } from "react";
 
-export default function TopHeader({ title, globalData = { campaigns: [], leads: [], logs: [] }, onSelectTab, onChangePasswordClick }) {
+export default function TopHeader({ title, onMenuToggle, onChangePasswordClick }) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-
-  // Compute search matches
-  const matchCounts = {
-    campaigns: 0,
-    leads: 0,
-    logs: 0
-  };
-
-  if (searchQuery.trim()) {
-    const q = searchQuery.toLowerCase();
-    matchCounts.campaigns = globalData.campaigns.filter(c => 
-      (c.campaign_name || "").toLowerCase().includes(q) || 
-      (c.search_query || "").toLowerCase().includes(q)
-    ).length;
-
-    matchCounts.leads = globalData.leads.filter(l => 
-      (l.customer_name || "").toLowerCase().includes(q) ||
-      (l.campaign_name || "").toLowerCase().includes(q) ||
-      (l.mobile || "").includes(q)
-    ).length;
-
-    matchCounts.logs = globalData.logs.filter(l => 
-      (l.log_message || "").toLowerCase().includes(q) ||
-      (l.campaign_name || "").toLowerCase().includes(q)
-    ).length;
-  }
-
-  const handleSelectTab = (tab) => {
-    if (onSelectTab) onSelectTab(tab, searchQuery);
-    setSearchQuery("");
-    setShowSearchDropdown(false);
-  };
 
   return (
     <header className="h-16 shrink-0 border-b border-border-subtle bg-surface px-6 flex items-center justify-between sticky top-0 z-40">
       
       <div className="flex items-center gap-4">
+        <button 
+          onClick={onMenuToggle}
+          className="md:hidden text-text-secondary hover:text-text-primary p-1 transition-colors"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
         <h1 className="text-xl font-semibold text-text-primary">{title}</h1>
       </div>
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 relative">
-          <div className="relative flex items-center">
-            <Search className="absolute left-3 w-4 h-4 text-text-muted" />
-            <input 
-              type="text" 
-              placeholder="Global Search..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setShowSearchDropdown(e.target.value.trim().length > 0);
-              }}
-              onFocus={() => {
-                if (searchQuery.trim().length > 0) setShowSearchDropdown(true);
-              }}
-              onBlur={() => setTimeout(() => setShowSearchDropdown(false), 200)}
-              className="pl-9 pr-4 py-1.5 w-48 md:w-64 rounded-lg border border-border-subtle bg-surface text-sm focus:border-accent transition-colors"
-            />
-          </div>
-
-          {showSearchDropdown && (
-            <div className="absolute top-full left-0 mt-2 w-full bg-surface-elevated border border-border-subtle rounded-xl shadow-xl overflow-hidden z-50">
-              <div className="p-2 text-xs font-semibold text-text-muted uppercase tracking-wider bg-surface border-b border-border-subtle">
-                Search Results
-              </div>
-              <ul className="py-1">
-                <li 
-                  className={`px-4 py-2 text-sm flex items-center justify-between cursor-pointer hover:bg-surface-hover ${matchCounts.campaigns > 0 ? "text-text-primary" : "text-text-muted"}`}
-                  onClick={() => handleSelectTab("campaigns")}
-                >
-                  <span>Campaigns</span>
-                  <span className="bg-surface border border-border-subtle rounded-full px-2 py-0.5 text-xs">{matchCounts.campaigns} found</span>
-                </li>
-                <li 
-                  className={`px-4 py-2 text-sm flex items-center justify-between cursor-pointer hover:bg-surface-hover ${matchCounts.leads > 0 ? "text-text-primary" : "text-text-muted"}`}
-                  onClick={() => handleSelectTab("leads")}
-                >
-                  <span>Leads Database</span>
-                  <span className="bg-surface border border-border-subtle rounded-full px-2 py-0.5 text-xs">{matchCounts.leads} found</span>
-                </li>
-                <li 
-                  className={`px-4 py-2 text-sm flex items-center justify-between cursor-pointer hover:bg-surface-hover ${matchCounts.logs > 0 ? "text-text-primary" : "text-text-muted"}`}
-                  onClick={() => handleSelectTab("logs")}
-                >
-                  <span>System Logs</span>
-                  <span className="bg-surface border border-border-subtle rounded-full px-2 py-0.5 text-xs">{matchCounts.logs} found</span>
-                </li>
-              </ul>
-            </div>
-          )}
+          {/* Search Removed */}
         </div>
-        
-        <div className="h-6 w-px bg-border-subtle mx-2 hidden md:block" />
 
         <div className="relative">
           <button 
